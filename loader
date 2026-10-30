@@ -1,0 +1,119 @@
+-- Players run:
+--   getgenv().script_key = "SOLS-XXXXX-XXXXX-XXXXX"
+--   loadstring(game:HttpGet("https://your-host/loader"))()
+
+local BASE_URL = "__BASE_URL__"
+
+local HttpService = game:GetService("HttpService")
+local StarterGui = game:GetService("StarterGui")
+
+local function notify(text)
+    warn("[Sols Hub] " .. text)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "Sols Hub",
+            Text = text,
+            Duration = 8,
+        })
+    end)
+end
+
+-- Executors run scripts in different environments, so look in every place
+-- the key could have been set.
+local function findKey()
+    local places = {}
+    if getgenv then
+        local ok, env = pcall(getgenv)
+        if ok and type(env) == "table" then
+            table.insert(places, env)
+        end
+    end
+    table.insert(places, _G)
+    if shared then
+        table.insert(places, shared)
+    end
+
+    for _, place in ipairs(places) do
+        local value = rawget(place, "script_key")
+        if type(value) == "string" and value ~= "" then
+            return value
+        end
+    end
+
+    -- Plain global set in the caller's own environment
+    local ok, value = pcall(function()
+        return script_key
+    end)
+    if ok and type(value) == "string" and value ~= "" then
+        return value
+    end
+
+    return nil
+end
+
+local key = findKey()
+
+if type(key) ~= "string" or key == "" then
+    notify("Set script_key before running the loader.")
+    return
+end
+
+local requestFn = request
+    or http_request
+    or (syn and syn.request)
+    or (http and http.request)
+
+if not requestFn then
+    notify("Your executor does not support HTTP requests.")
+    return
+end
+
+local hwid
+if gethwid then
+    local ok, value = pcall(gethwid)
+    if ok then
+        hwid = value
+    end
+end
+if not hwid then
+    local ok, value = pcall(function()
+        return game:GetService("RbxAnalyticsService"):GetClientId()
+    end)
+    if ok then
+        hwid = value
+    end
+end
+
+if not hwid then
+    notify("Could not read a device id.")
+    return
+end
+
+local ok, response = pcall(requestFn, {
+    Url = BASE_URL .. "/v1/script",
+    Method = "POST",
+    Headers = { ["Content-Type"] = "application/json" },
+    Body = HttpService:JSONEncode({ key = key, hwid = tostring(hwid) }),
+})
+
+if not ok or not response then
+    notify("Could not reach the key server.")
+    return
+end
+
+if response.StatusCode ~= 200 then
+    local message = "Key check failed."
+    pcall(function()
+        message = HttpService:JSONDecode(response.Body).message or message
+    end)
+    notify(message)
+    return
+end
+
+local chunk, err = loadstring(response.Body)
+if not chunk then
+    notify("Script failed to load: " .. tostring(err))
+    return
+end
+
+chunk()
