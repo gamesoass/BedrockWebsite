@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bedrock Games</title>
+<meta name="description" content="Play free browser games at bedrockcalculator.pro.">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8005597540367064"
+     crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070a14;
+    --grid: rgba(120,150,255,.06);
+    --card: rgba(16,22,40,.72);
+    --card-solid: #0f1528;
+    --text: #f2f5ff;
+    --muted: #8d97b5;
+    --border: #1f2a47;
+    --cyan: #4de8ff;
+    --mint: #7dffa0;
+    --blue: #4a7dff;
+    --purple: #b94dff;
+    --pink: #ff4da6;
+    --orange: #ff8a3d;
+    --yellow: #ffd93d;
+    --ink: #05131a;
+    --grad-logo: linear-gradient(90deg, #4de8ff 0%, #4a7dff 30%, #b94dff 60%, #ff4da6 100%);
+    --grad-play: linear-gradient(90deg, #4de8ff, #7dffa0);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Fredoka", ui-rounded, "Nunito", "Trebuchet MS", system-ui, sans-serif;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 50% -10%, rgba(74,125,255,.14), transparent 55%),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: auto, 44px 44px, 44px 44px;
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* glowing pellets drifting in the background */
+  .pellet {
+    position: fixed; z-index: 0; pointer-events: none; border-radius: 50%;
+    animation: float 9s ease-in-out infinite alternate;
+  }
+  @keyframes float {
+    from { transform: translate(0,0); opacity: .55; }
+    to   { transform: translate(14px,-22px); opacity: 1; }
+  }
+
+  header, .hero, main, footer { position: relative; z-index: 1; }
+
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(7,10,20,.8); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav { max-width: 1100px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-weight: 700; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+  .logo-dot {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--grad-logo);
+    box-shadow: 0 0 16px rgba(77,232,255,.55);
+  }
+  .nav a.link { color: var(--muted); font-weight: 500; transition: color .15s; }
+  .nav a.link:hover { color: var(--cyan); }
+
+  .hero { max-width: 1100px; margin: 0 auto; padding: 72px 20px 30px; }
+  .hero h1 { font-size: clamp(2.5rem, 7vw, 4.6rem); font-weight: 700; line-height: 1.02; letter-spacing: -.01em; max-width: 13ch; }
+  .hero h1 span {
+    background: var(--grad-logo);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 22px rgba(120,120,255,.35));
+  }
+  .hero p { color: var(--muted); margin-top: 16px; font-size: 1.15rem; max-width: 44ch; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 20px 80px; width: 100%; flex: 1; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+  .section-head h2 { font-size: 1.35rem; font-weight: 600; }
+  .count { color: var(--muted); font-size: .9rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px; }
+
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: 0 0 40px rgba(74,125,255,.06);
+    transition: transform .2s cubic-bezier(.3,1.5,.5,1), border-color .2s, box-shadow .2s;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(77,232,255,.5);
+    box-shadow: 0 0 46px rgba(77,232,255,.18), 0 18px 40px rgba(0,0,0,.4);
+  }
+
+  .thumb {
+    aspect-ratio: 16 / 10; position: relative; overflow: hidden;
+    background-color: #050812;
+    background-image:
+      radial-gradient(circle at 70% 30%, rgba(185,77,255,.16), transparent 60%),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: auto, 28px 28px, 28px 28px;
+  }
+  .thumb svg { width: 100%; height: 100%; display: block; }
+  .thumb .wiggle { animation: wiggle 3.4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+  .thumb .wiggle2 { animation: wiggle 4.2s ease-in-out infinite alternate-reverse; transform-box: fill-box; transform-origin: center; }
+  @keyframes wiggle { from { transform: translate(-6px,3px) rotate(-2deg); } to { transform: translate(6px,-3px) rotate(2deg); } }
+
+  .body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .title { display: flex; align-items: baseline; }
+  .title h3 {
+    font-size: 2rem; font-weight: 700; letter-spacing: .01em; line-height: 1;
+    background: var(--grad-logo); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .title .suffix { font-size: 1rem; font-weight: 600; color: var(--cyan); margin-left: 3px; }
+  .tagline { color: var(--muted); font-size: .9rem; letter-spacing: .04em; }
+  .body p { color: #aab3cf; font-size: .92rem; flex: 1; margin-top: 4px; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: .72rem; font-weight: 500; padding: 3px 11px; border-radius: 99px; border: 1px solid var(--border); color: var(--cyan); background: rgba(77,232,255,.06); }
+
+  .play {
+    margin-top: 12px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--grad-play); color: var(--ink);
+    font-weight: 700; font-size: 1.25rem; letter-spacing: .12em;
+    padding: 14px 16px; border-radius: 18px;
+    box-shadow: 0 0 28px rgba(77,232,255,.35);
+    transition: transform .12s, box-shadow .15s, filter .15s;
+  }
+  .play:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(110,255,200,.55); filter: brightness(1.06); }
+  .play:active { transform: scale(.97); }
+  .play:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+  .card.soon { border-style: dashed; background: transparent; box-shadow: none; }
+  .card.soon:hover { transform: none; border-color: var(--border); box-shadow: none; }
+  .card.soon .thumb { display: grid; place-items: center; font-size: 3.4rem; font-weight: 700; color: var(--border); }
+  .card.soon h3 { font-size: 1.3rem; font-weight: 600; }
+
+  footer { border-top: 1px solid var(--border); color: var(--muted); font-size: .88rem; background: rgba(7,10,20,.8); }
+  footer div { max-width: 1100px; margin: 0 auto; padding: 22px 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<script>
+  // Scatter glowing pellets in the background
+  (function () {
+    const colors = ["#4de8ff", "#7dffa0", "#ffd93d", "#ff8a3d", "#ff4da6", "#b94dff", "#4a7dff"];
+    for (let i = 0; i < 16; i++) {
+      const d = document.createElement("div");
+      d.className = "pellet";
+      const c = colors[i % colors.length];
+      const s = 4 + Math.random() * 6;
+      d.style.cssText =
+        "left:" + (Math.random() * 100) + "%;top:" + (Math.random() * 100) + "%;" +
+        "width:" + s + "px;height:" + s + "px;background:" + c + ";" +
+        "box-shadow:0 0 " + (s * 2.5) + "px " + c + ";" +
+        "animation-duration:" + (6 + Math.random() * 8) + "s;animation-delay:-" + (Math.random() * 8) + "s;";
+      document.body.appendChild(d);
+    }
+  })();
+</script>
+
+<header>
+  <div class="nav">
+    <a href="/" class="logo"><span class="logo-dot"></span> Bedrock Games</a>
+    <a class="link" href="#games">Games</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Free games. <span>Just press play.</span></h1>
+  <p>A growing collection of browser games. No downloads, no sign-ups.</p>
+</section>
+
+<main id="games">
+  <div class="section-head">
+    <h2>All games</h2>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div>
+    <span>&copy; <span id="year"></span> bedrockcalculator.pro</span>
+    <span>More games coming soon · <a href="/privacy.html" style="color:var(--cyan)">Privacy policy</a></span>
+  </div>
+</footer>
+
+<script>
+  // Thumbnail art for GLOOP.io: glowing worms, pellets, a pentagon.
+  const gloopThumb = `
+  <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gloop game art">
+    <defs>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <radialGradient id="cy" cx="35%" cy="30%"><stop offset="0" stop-color="#9af3ff"/><stop offset="1" stop-color="#1fb7d8"/></radialGradient>
+      <radialGradient id="pk" cx="35%" cy="30%"><stop offset="0" stop-color="#ff9ad0"/><stop offset="1" stop-color="#d12a85"/></radialGradient>
+    </defs>
+    <g filter="url(#glow)">
+      <circle cx="40" cy="38" r="4" fill="#ffd93d"/><circle cx="268" cy="28" r="4" fill="#7dffa0"/>
+      <circle cx="292" cy="150" r="4" fill="#ff8a3d"/><circle cx="58" cy="170" r="4" fill="#b94dff"/>
+      <circle cx="170" cy="20" r="3.5" fill="#4a7dff"/><circle cx="20" cy="112" r="3.5" fill="#ff4da6"/>
+      <circle cx="238" cy="176" r="3.5" fill="#4de8ff"/>
+    </g>
+    <polygon points="270,70 292,86 284,112 256,112 248,86" fill="#7a2fd6" stroke="#b94dff" stroke-width="3.5" stroke-linejoin="round" filter="url(#glow)"/>
+    <!-- pink worm -->
+    <g class="wiggle2" filter="url(#glow)">
+      <circle cx="40"  cy="62" r="12" fill="url(#pk)"/><circle cx="62" cy="54" r="14" fill="url(#pk)"/>
+      <circle cx="88"  cy="48" r="16" fill="url(#pk)"/>
+      <circle cx="96" cy="44" r="4.5" fill="#fff"/><circle cx="98" cy="44" r="2.2" fill="#05131a"/>
+      <circle cx="96" cy="56" r="4.5" fill="#fff"/><circle cx="98" cy="56" r="2.2" fill="#05131a"/>
+    </g>
+    <!-- cyan worm -->
+    <g class="wiggle" filter="url(#glow)">
+      <circle cx="62"  cy="148" r="16" fill="url(#cy)"/><circle cx="94" cy="136" r="19" fill="url(#cy)"/>
+      <circle cx="130" cy="125" r="22" fill="url(#cy)"/><circle cx="170" cy="113" r="26" fill="url(#cy)"/>
+      <circle cx="181" cy="104" r="7" fill="#fff"/><circle cx="181" cy="122" r="7" fill="#fff"/>
+      <circle cx="184" cy="104" r="3.5" fill="#05131a"/><circle cx="184" cy="122" r="3.5" fill="#05131a"/>
+    </g>
+    <circle cx="224" cy="106" r="4" fill="#ffd93d" filter="url(#glow)"/><circle cx="238" cy="102" r="3" fill="#ffd93d" opacity=".7"/>
+  </svg>`;
+
+  // ADD NEW GAMES HERE — copy one object and change the fields.
+  const games = [
+    {
+      title: "GLOOP",
+      suffix: ".io",
+      tagline: "squish · slither · shoot",
+      description: "Eat pellets, outgrow rivals, and hunt the Alpha Pentagon. Don't hit the walls!",
+      url: "https://gloop.bedrockcalculator.pro",
+      thumb: gloopThumb,
+      tags: ["Action", "Slither", "Free"]
+    }
+  ];
+
+  const grid = document.getElementById("grid");
+
+  games.forEach(g => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const thumb = document.createElement("div");
+    thumb.className = "thumb";
+    thumb.innerHTML = g.thumb;
+
+    const body = document.createElement("div");
+    body.className = "body";
+
+    const title = document.createElement("div");
+    title.className = "title";
+    const h3 = document.createElement("h3");
+    h3.textContent = g.title;
+    title.appendChild(h3);
+    if (g.suffix) {
+      const s = document.createElement("span");
+      s.className = "suffix";
+      s.textContent = g.suffix;
+      title.appendChild(s);
+    }
+
+    const tl = document.createElement("div");
+    tl.className = "tagline";
+    tl.textContent = g.tagline;
+
+    const p = document.createElement("p");
+    p.textContent = g.description;
+
+    const tags = document.createElement("div");
+    tags.className = "tags";
+    g.tags.forEach(t => {
+      const s = document.createElement("span");
+      s.className = "tag";
+      s.textContent = t;
+      tags.appendChild(s);
+    });
+
+    const play = document.createElement("a");
+    play.className = "play";
+    play.href = g.url;
+    play.textContent = "PLAY";
+    play.setAttribute("aria-label", "Play " + g.title);
+
+    body.append(title, tl, p, tags, play);
+    card.append(thumb, body);
+    grid.appendChild(card);
+  });
+
+  const soon = document.createElement("article");
+  soon.className = "card soon";
+  soon.innerHTML =
+    '<div class="thumb" aria-hidden="true">?</div>' +
+    '<div class="body"><h3>Next game</h3><p>Something new is on the way. Check back soon.</p></div>';
+  grid.appendChild(soon);
+
+  document.getElementById("count").textContent =
+    games.length + (games.length === 1 ? " game" : " games");
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
